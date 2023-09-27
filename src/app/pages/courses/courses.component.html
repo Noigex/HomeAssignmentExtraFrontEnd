@@ -1,0 +1,167 @@
+<div class="get-bar-card">
+  <div class="flex-column-all">
+    <p-button
+      styleClass="p-button-sm"
+      label="GET Courses"
+      icon="pi pi-search"
+      [loading]="loading1"
+      (click)="getCourses()"
+    ></p-button>
+  </div>
+
+  <div class="flex-column-all">
+    <label for="course-name-filter">Search by Course Name (Mendatory)</label>
+    <input
+      class="p-inputtext-sm"
+      type="text"
+      pInputText
+      id="course-name-filter"
+      [(ngModel)]="courseName"
+      required
+    />
+    <p-button
+      styleClass="p-button-sm"
+      label="GET BY NAME"
+      icon="pi pi-search"
+      [loading]="loading2"
+      (click)="getSpecificCourse()"
+    ></p-button>
+  </div>
+</div>
+
+<div class="card">
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <button
+        pButton
+        pRipple
+        label="New"
+        icon="pi pi-plus"
+        class="p-button-success mr-2"
+        (click)="openNewCourse()"
+      ></button>
+    </ng-template>
+  </p-toolbar>
+  <p-table
+    #dt
+    [value]="courses"
+    [rows]="10"
+    [paginator]="true"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [rowHover]="true"
+    dataKey="course_name"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        <h5 class="m-0">Manage Courses</h5>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="min-width: 10rem">Course Name</th>
+        <th style="min-width: 10rem">Year</th>
+        <th style="min-width: 10rem">Student ID</th>
+        <th style="min-width: 10rem">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-course>
+      <tr>
+        <td>{{ course.course_name }}</td>
+        <td>{{ course.year }}</td>
+        <td>{{ course.studentId }}</td>
+        <td>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-success mr-2"
+            (click)="openEditCourse(course)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-trash"
+            style="margin-left: 1rem"
+            class="p-button-rounded p-button-warning"
+            (click)="deleteCourse(course)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        List of courses.
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+<p-dialog
+  [(visible)]="courseDialog"
+  [style]="{ width: '450px' }"
+  header="Student Details"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <div class="field">
+      <label for="course-name">Course Name</label>
+      <input
+        type="text"
+        pInputText
+        id="course-name"
+        [(ngModel)]="course.course_name"
+        required
+      />
+      <small class="p-error" *ngIf="submitted && !course.course_name"
+        >Course Name is required.</small
+      >
+    </div>
+    <div class="field">
+      <label for="year">Year</label>
+      <input
+        type="number"
+        pInputText
+        id="year"
+        [(ngModel)]="course.year"
+        required
+      />
+      <small class="p-error" *ngIf="submitted && !course.year"
+        >Year is required.</small
+      >
+    </div>
+    <div class="field" *ngIf="!isUpdate">
+      <label>StudentID</label>
+      <p-listbox
+        [options]="this.students"
+        [(ngModel)]="student"
+        optionLabel="student_id"
+      ></p-listbox>
+      <small class="p-error" *ngIf="submitted && !course.year"
+        >Student is required.</small
+      >
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      label="Cancel"
+      icon="pi pi-times"
+      class="p-button-text"
+      (click)="hideDialog()"
+    ></button>
+    <button
+      pButton
+      pRipple
+      [label]="isUpdate ? 'Update' : 'Create'"
+      icon="pi pi-check"
+      class="p-button-text"
+      (click)="isUpdate ? updateCourse() : createCourse()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
